@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>今日の米価格入力ツール</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 650px; margin: auto; }
+    h2 { margin-bottom: 10px; }
+    .entry { margin-bottom: 12px; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input[type="number"] { width: 120px; margin-right: 10px; }
+    textarea { width: 100%; height: 300px; margin-top: 20px; font-size: 14px; }
+    button { padding: 10px 20px; font-size: 16px; margin: 5px 10px 10px 0; }
+    .out-of-stock { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <h2>今日の米価格入力</h2>
+  <div id="riceEntries"></div>
+  <button onclick="generateText()">📄 価格を整形</button>
+  <button onclick="copyText()">📋 コピー</button>
+  <textarea id="output" placeholder="ここに結果が表示されます"></textarea>
+
+  <script>
+    const riceList = [
+      "栃木県産こしひかり5kg",
+      "パールライス無洗米こしひかりブレンド 10kg",
+      "カルローズ5kg",
+      "房の黄金米ブレンド 5kg",
+      "茨城県産こしひかり5kg",
+      "千葉県産こしひかり玄米30kg",
+      "宮城つや姫 玄米5kg",
+      "むらせソフトブラン玄米5kg",
+      "ジャスミンライス 8kg",
+      "北海道 ゆめぞう無洗米5kg",
+      "宮城県 ひとめぼれ無洗米10kg",
+      "北海道 ななつぼし10kg",
+      "国内産 ブレンド米 10kg"
+    ];
+
+    const container = document.getElementById("riceEntries");
+
+    riceList.forEach((name, index) => {
+      const div = document.createElement("div");
+      div.className = "entry";
+      div.innerHTML = `
+        <label>${name}</label>
+        <input type="number" id="price_${index}" placeholder="価格を入力">
+        <label class="out-of-stock"><input type="checkbox" id="outofstock_${index}"> 入荷なし</label>
+      `;
+      container.appendChild(div);
+    });
+
+    function generateText() {
+      let output = "📢今日の米価格です！\n\n";
+      riceList.forEach((name, index) => {
+        const price = document.getElementById("price_" + index).value;
+        const outOfStock = document.getElementById("outofstock_" + index).checked;
+        if (outOfStock) {
+          output += `${name}：入荷なし\n`;
+        } else if (price) {
+          output += `${name}：${price}円\n`;
+        }
+      });
+      document.getElementById("output").value = output.trim();
+    }
+
+    function copyText() {
+      const textarea = document.getElementById("output");
+      textarea.select();
+      document.execCommand("copy");
+      alert("コピーしました！");
+    }
+  </script>
+</body>
+</html>
